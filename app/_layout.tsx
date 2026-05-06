@@ -1,5 +1,7 @@
 import { useAuthSession } from '@/hooks/useAuthSession';
+import { ProfileProvider } from '@/providers/ProfileProvider';
 import { useAuthStore } from '@/stores/authStore';
+import { useProfileStore } from '@/stores/profileStore';
 import {
   InstrumentSerif_400Regular,
   useFonts,
@@ -24,33 +26,36 @@ export default function RootLayout() {
   useAuthSession();
   const isAuthenticated = useAuthStore((s) => !!s.session);
   const isInitialized = useAuthStore((s) => s.isInitialized);
+  const isProfileInitialized = useProfileStore((s) => s.isProfileInitialized);
 
   useEffect(() => {
-    if (fontsLoaded && isInitialized) {
+    if (fontsLoaded && isInitialized && isProfileInitialized) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, isInitialized]);
+  }, [fontsLoaded, isInitialized, isProfileInitialized]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <View className="flex-1 bg-background">
           <KeyboardProvider>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: 'transparent' },
-              }}
-            >
-              <Stack.Protected guard={!isAuthenticated}>
-                <Stack.Screen name="(auth)" />
-              </Stack.Protected>
-              <Stack.Protected guard={isAuthenticated}>
-                <Stack.Screen name="(protected)" />
-              </Stack.Protected>
-            </Stack>
-            <PortalHost />
-            <Toast />
+            <ProfileProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              >
+                <Stack.Protected guard={!isAuthenticated}>
+                  <Stack.Screen name="(auth)" />
+                </Stack.Protected>
+                <Stack.Protected guard={isAuthenticated}>
+                  <Stack.Screen name="(protected)" />
+                </Stack.Protected>
+              </Stack>
+              <PortalHost />
+              <Toast />
+            </ProfileProvider>
           </KeyboardProvider>
         </View>
       </SafeAreaProvider>

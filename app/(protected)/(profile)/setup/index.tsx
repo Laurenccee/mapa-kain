@@ -36,6 +36,7 @@ export default function ProfileSetupScreen() {
       setIsLoading(false);
     }
   };
+
   return (
     <SafeAreaView className="flex-1 mb-safe">
       <View className="px-4 self-end">

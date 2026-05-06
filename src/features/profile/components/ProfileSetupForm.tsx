@@ -12,7 +12,8 @@ import {
   UserAccountIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -22,6 +23,9 @@ import { createProfile } from '../services/profileServices';
 export default function ProfileSetupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const setHasProfile = useProfileStore((s) => s.setHasProfile);
+  const hasProfile = useProfileStore((s) => s.hasProfile);
+  const router = useRouter();
+
   const { control, handleSubmit } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -36,7 +40,6 @@ export default function ProfileSetupForm() {
     setIsLoading(true);
     try {
       await createProfile(data);
-      setHasProfile(true);
       Toast.show({ type: 'success', text1: 'Profile created successfully!' });
     } catch (error: any) {
       Toast.show({
@@ -48,6 +51,12 @@ export default function ProfileSetupForm() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (hasProfile) {
+      router.replace('/(protected)/(tabs)/map');
+    }
+  }, [hasProfile]);
 
   return (
     <View className="flex flex-col gap-4">
@@ -84,9 +93,18 @@ export default function ProfileSetupForm() {
         <InputField
           name="phone_number"
           label="Phone Number (Optional)"
-          placeholder="(e.g. +1234567890)"
+          placeholder="(+63XXXXXXXXX)"
           control={control}
           isPending={isLoading}
+          keyboardType="phone-pad"
+          onChangeText={(text, onChange) => {
+            const val = text.replace(/\s+/g, '');
+            if (val.startsWith('09')) {
+              onChange(`+63${val.slice(1)}`);
+            } else {
+              onChange(val);
+            }
+          }}
           leadingIcon={
             <HugeiconsIcon
               icon={TelephoneIcon}

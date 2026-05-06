@@ -21,7 +21,7 @@ export default function TabsLayout() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <HugeiconsIcon icon={MapingIcon} size={size} color={color} />
+            <HugeiconsIcon icon={MapingIcon} size={16} color={color} />
           ),
         }}
       />

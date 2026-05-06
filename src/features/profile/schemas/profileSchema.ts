@@ -20,7 +20,10 @@ export const profileSchema = z.object({
 
   phone_number: z
     .string()
-    .regex(/^(09|\+639)\d{9}$/, 'Please enter a valid PH mobile number')
+    .regex(
+      /^\+639\d{9}$/,
+      'Please enter a valid PH mobile number (+63XXXXXXXXX)',
+    )
     .optional()
     .or(z.literal('')),
 

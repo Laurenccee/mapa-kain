@@ -10,17 +10,22 @@ import {
   Mail01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import {
+  clearRememberMe,
+  loadRememberMe,
+  saveRememberMe,
+} from '../hooks/useRememberMe';
 import { SignInData, SignInSchema } from '../schemas/authSchema';
 import FormActions from './FormActions';
 
 export default function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { control, handleSubmit } = useForm<SignInData>({
+  const { control, handleSubmit, setValue } = useForm<SignInData>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: '',
@@ -28,9 +33,24 @@ export default function SignInForm() {
     },
   });
 
+  useEffect(() => {
+    loadRememberMe().then((saved) => {
+      if (saved) {
+        setValue('email', saved.email);
+        setValue('password', saved.password);
+        setRememberMe(true);
+      }
+    });
+  }, []);
+
   const handleSignIn = async (data: SignInData) => {
     setIsLoading(true);
     try {
+      if (rememberMe) {
+        await saveRememberMe(data.email, data.password);
+      } else {
+        await clearRememberMe();
+      }
       const { error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,

@@ -3,7 +3,7 @@ import { EyeIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import React, { useState } from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { View } from 'react-native';
+import { KeyboardTypeOptions, View } from 'react-native';
 import {
   InputGroup,
   InputGroupAddon,
@@ -21,6 +21,8 @@ interface InputFieldProps<T extends FieldValues> {
   placeholder?: string;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
+  keyboardType?: KeyboardTypeOptions;
+  onChangeText?: (text: string, onChange: (v: string) => void) => void;
 }
 
 export default function InputField<T extends FieldValues>({
@@ -32,6 +34,8 @@ export default function InputField<T extends FieldValues>({
   placeholder,
   leadingIcon,
   trailingIcon,
+  keyboardType,
+  onChangeText,
 }: InputFieldProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
@@ -52,7 +56,9 @@ export default function InputField<T extends FieldValues>({
               </InputGroupAddon>
             )}
             <InputGroupInput
-              onChangeText={onChange}
+              onChangeText={(text) =>
+                onChangeText ? onChangeText(text, onChange) : onChange(text)
+              }
               onBlur={onBlur}
               value={value}
               placeholder={placeholder}
@@ -60,6 +66,7 @@ export default function InputField<T extends FieldValues>({
               autoComplete={secureTextEntry ? 'current-password' : undefined}
               editable={!isPending}
               invalid={fieldState.invalid}
+              keyboardType={keyboardType}
             />
             {secureTextEntry ? (
               <InputGroupAddon align="inline-end">

@@ -6,7 +6,7 @@ export async function checkProfile(userId: string): Promise<boolean> {
     .from('profiles')
     .select('id')
     .eq('id', userId)
-    .maybeSingle();
+    .single();
   return !!data;
 }
 
@@ -49,7 +49,7 @@ export async function createProfile(values: ProfileFormValues): Promise<void> {
     avatarUrl = await uploadAvatar(userId, avatarUrl);
   }
 
-  const { error } = await supabase.from('profiles').upsert({
+  const { error } = await supabase.from('profiles').insert({
     id: userId,
     full_name: values.full_name,
     username: values.username,
@@ -58,5 +58,7 @@ export async function createProfile(values: ProfileFormValues): Promise<void> {
     updated_at: new Date().toISOString(),
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 }

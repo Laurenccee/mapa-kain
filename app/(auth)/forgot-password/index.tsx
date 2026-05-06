@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import ForgetPasswordForm from '@/features/auth/components/ForgetPasswordForm';
-import { useTheme } from '@/hooks/useTheme';
 import {
   ArrowLeft01Icon,
   InformationSquareIcon,
@@ -15,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ForgetPasswordScreen() {
-  const theme = useTheme();
   const router = useRouter();
   return (
     <SafeAreaView className="flex-1 mb-safe">

@@ -1,10 +1,10 @@
 import { useProfileStore } from '@/stores/profileStore';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 
 export default function ProtectedLayout() {
   const hasProfile = useProfileStore((s) => s.hasProfile);
+  const router = useRouter();
 
-  // Wait for profile check before rendering
   if (hasProfile === null) return null;
 
   return (
@@ -15,10 +15,10 @@ export default function ProtectedLayout() {
       }}
     >
       <Stack.Protected guard={!hasProfile}>
-        <Stack.Screen name="(profile)" options={{ headerShown: false }} />
+        <Stack.Screen name="(profile)/setup" />
       </Stack.Protected>
       <Stack.Protected guard={hasProfile}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>
   );
