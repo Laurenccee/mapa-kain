@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 export default function MapScreen() {
@@ -35,7 +35,7 @@ export default function MapScreen() {
   };
 
   return (
-    <View className="flex-1 w-full items-center justify-center">
+    <SafeAreaView className="flex-1 w-full items-center justify-center bg-background">
       <Button
         className="max-w-xs w-full"
         onPress={handleSignOut}
@@ -52,6 +52,6 @@ export default function MapScreen() {
           />
         )}
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }

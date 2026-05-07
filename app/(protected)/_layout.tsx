@@ -1,11 +1,14 @@
 import { useProfileStore } from '@/stores/profileStore';
 import { Stack, useRouter } from 'expo-router';
+import { ActivityIndicator } from 'react-native';
 
 export default function ProtectedLayout() {
   const hasProfile = useProfileStore((s) => s.hasProfile);
   const router = useRouter();
 
-  if (hasProfile === null) return null;
+  if (hasProfile === null) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <Stack
@@ -15,9 +18,9 @@ export default function ProtectedLayout() {
       }}
     >
       <Stack.Protected guard={!hasProfile}>
-        <Stack.Screen name="(profile)/setup" />
+        <Stack.Screen name="(profile)/setup/index" />
       </Stack.Protected>
-      <Stack.Protected guard={hasProfile}>
+      <Stack.Protected guard={!!hasProfile}>
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>

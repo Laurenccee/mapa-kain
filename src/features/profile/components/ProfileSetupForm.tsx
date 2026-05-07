@@ -13,7 +13,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -52,11 +52,11 @@ export default function ProfileSetupForm() {
     }
   };
 
-  useEffect(() => {
-    if (hasProfile) {
-      router.replace('/(protected)/(tabs)/map');
-    }
-  }, [hasProfile]);
+  // useEffect(() => {
+  //   if (hasProfile) {
+  //     router.replace('/(protected)/(tabs)/map');
+  //   }
+  // }, [hasProfile]);
 
   return (
     <View className="flex flex-col gap-4">

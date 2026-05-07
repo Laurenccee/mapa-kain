@@ -1,27 +1,35 @@
-import { MapingIcon } from '@hugeicons/core-free-icons';
+import { TabBar } from '@/components/layouts/TabBar';
+import { useTheme } from '@/hooks/useTheme';
+import { MapPinIcon, Settings01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabsLayout() {
+  const theme = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#141053',
-        tabBarInactiveTintColor: 'rgba(20,16,83,0.5)',
-        tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-        },
         tabBarShowLabel: false,
       }}
+      tabBar={(props) => <TabBar {...props} />}
     >
       <Tabs.Screen
         name="map"
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <HugeiconsIcon icon={MapingIcon} size={16} color={color} />
+          tabBarIcon: ({ color }) => (
+            <HugeiconsIcon icon={MapPinIcon} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <HugeiconsIcon icon={Settings01Icon} color={color} />
           ),
         }}
       />

@@ -1,7 +1,6 @@
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { ProfileProvider } from '@/providers/ProfileProvider';
 import { useAuthStore } from '@/stores/authStore';
-import { useProfileStore } from '@/stores/profileStore';
 import {
   InstrumentSerif_400Regular,
   useFonts,
@@ -26,13 +25,21 @@ export default function RootLayout() {
   useAuthSession();
   const isAuthenticated = useAuthStore((s) => !!s.session);
   const isInitialized = useAuthStore((s) => s.isInitialized);
-  const isProfileInitialized = useProfileStore((s) => s.isProfileInitialized);
 
   useEffect(() => {
-    if (fontsLoaded && isInitialized && isProfileInitialized) {
+    if (fontsLoaded && isInitialized) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, isInitialized, isProfileInitialized]);
+  }, [fontsLoaded, isInitialized]);
+
+  console.log('RootLayout rendered -', {
+    fontsLoaded,
+    isInitialized,
+  });
+
+  if (!fontsLoaded || !isInitialized) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
