@@ -1,12 +1,14 @@
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { ProfileProvider } from '@/providers/ProfileProvider';
 import { useAuthStore } from '@/stores/authStore';
+import { useThemeStore } from '@/stores/themeStore';
 import {
   InstrumentSerif_400Regular,
   useFonts,
 } from '@expo-google-fonts/instrument-serif';
 import { PortalHost } from '@rn-primitives/portal';
 import { SplashScreen, Stack } from 'expo-router';
+import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -25,6 +27,12 @@ export default function RootLayout() {
   useAuthSession();
   const isAuthenticated = useAuthStore((s) => !!s.session);
   const isInitialized = useAuthStore((s) => s.isInitialized);
+  const themeMode = useThemeStore((s) => s.mode);
+  const { setColorScheme } = useColorScheme();
+
+  useEffect(() => {
+    setColorScheme(themeMode);
+  }, [themeMode]);
 
   useEffect(() => {
     if (fontsLoaded && isInitialized) {
@@ -53,6 +61,7 @@ export default function RootLayout() {
                   contentStyle: { backgroundColor: 'transparent' },
                 }}
               >
+                <Stack.Screen name="index" />
                 <Stack.Protected guard={!isAuthenticated}>
                   <Stack.Screen name="(auth)" />
                 </Stack.Protected>

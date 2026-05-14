@@ -1,24 +1,24 @@
-import { AppImagePicker } from '@/components/shared/AppImagePicker';
-import InputField from '@/components/shared/InputField';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import { Text } from '@/components/ui/text';
-import { useProfileStore } from '@/stores/profileStore';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { AppImagePicker } from "@/components/shared/AppImagePicker";
+import InputField from "@/components/shared/InputField";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/text";
+import { useProfileStore } from "@/stores/profileStore";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowRight02Icon,
   AtIcon,
   TelephoneIcon,
   UserAccountIcon,
-} from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react-native';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { View } from 'react-native';
-import Toast from 'react-native-toast-message';
-import { ProfileFormValues, profileSchema } from '../schemas/profileSchema';
-import { createProfile } from '../services/profileServices';
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { View } from "react-native";
+import Toast from "react-native-toast-message";
+import { ProfileFormValues, profileSchema } from "../schemas/profileSchema";
+import { createProfile } from "../services/profileServices";
 
 export default function ProfileSetupForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +29,10 @@ export default function ProfileSetupForm() {
   const { control, handleSubmit } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      full_name: '',
-      username: '',
-      phone_number: '',
-      avatar_url: '',
+      full_name: "",
+      username: "",
+      phone_number: "",
+      avatar_url: "",
     },
   });
 
@@ -40,23 +40,17 @@ export default function ProfileSetupForm() {
     setIsLoading(true);
     try {
       await createProfile(data);
-      Toast.show({ type: 'success', text1: 'Profile created successfully!' });
+      Toast.show({ type: "success", text1: "Profile created successfully!" });
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Failed to create profile',
-        text2: error?.message ?? 'Please try again.',
+        type: "error",
+        text1: "Failed to create profile",
+        text2: error?.message ?? "Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (hasProfile) {
-  //     router.replace('/(protected)/(tabs)/map');
-  //   }
-  // }, [hasProfile]);
 
   return (
     <View className="flex flex-col gap-4">
@@ -98,8 +92,8 @@ export default function ProfileSetupForm() {
           isPending={isLoading}
           keyboardType="phone-pad"
           onChangeText={(text, onChange) => {
-            const val = text.replace(/\s+/g, '');
-            if (val.startsWith('09')) {
+            const val = text.replace(/\s+/g, "");
+            if (val.startsWith("09")) {
               onChange(`+63${val.slice(1)}`);
             } else {
               onChange(val);
@@ -120,7 +114,7 @@ export default function ProfileSetupForm() {
         disabled={isLoading}
       >
         <Text className="text-lg">
-          {isLoading ? 'Creating Profile...' : 'Set Up Profile'}
+          {isLoading ? "Creating Profile..." : "Set Up Profile"}
         </Text>
         {isLoading ? (
           <Spinner size={18} />

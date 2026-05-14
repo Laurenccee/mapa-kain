@@ -1,57 +1,69 @@
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import React, { useMemo, useRef } from 'react';
+
 import { Text } from '@/components/ui/text';
-import { supabase } from '@/lib/supabase';
-import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react-native';
-import React from 'react';
+import { BuildingsLayer } from '@/features/map/components/BuildingsLayer';
+import { SelectedBuildingLayer } from '@/features/map/components/SelectedBuildingLayer';
+import { useBuildingSelection } from '@/features/map/hooks/useBuildingSelection';
+import { useLocationTracking } from '@/hooks/useLocationTracking';
+import {
+  Camera,
+  Map,
+  MapRef,
+  UserLocation,
+} from '@maplibre/maplibre-react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 
 export default function MapScreen() {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const { location, error, isLoading } = useLocationTracking();
+  const mapRef = useRef<MapRef>(null);
+  const { selection, handleMapPress } = useBuildingSelection(mapRef);
 
-  const handleSignOut = async () => {
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error signing out:',
-          text2: error.message,
-        });
-
-        setIsLoading(false);
-        return;
-      }
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error signing out:',
-      });
-      setIsLoading(false);
+  const center = useMemo<[number, number]>(() => {
+    if (
+      location &&
+      typeof location.coords.longitude === 'number' &&
+      typeof location.coords.latitude === 'number'
+    ) {
+      return [location.coords.longitude, location.coords.latitude];
     }
-  };
+    return [122.36, 11.51];
+  }, [location?.coords.latitude, location?.coords.longitude]);
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text className="text-secondary">{error}</Text>
+      </View>
+    );
+  }
+
+  if (isLoading || !location) {
+    return (
+      <ActivityIndicator size="large" color="#ef4444" style={styles.centered} />
+    );
+  }
 
   return (
-    <SafeAreaView className="flex-1 w-full items-center justify-center bg-background">
-      <Button
-        className="max-w-xs w-full"
-        onPress={handleSignOut}
-        disabled={isLoading}
+    <SafeAreaView className="flex-1 bg-background">
+      <Map
+        style={styles.map}
+        mapStyle="https://tiles.openfreemap.org/styles/dark"
+        logo={false}
+        attribution={false}
+        ref={mapRef}
+        onPress={handleMapPress}
       >
-        <Text>{isLoading ? 'Signing out...' : 'Sign Out'}</Text>
-        {isLoading ? (
-          <Spinner size={18} />
-        ) : (
-          <HugeiconsIcon
-            icon={ArrowRight02Icon}
-            size={18}
-            className="text-primary-foreground"
-          />
-        )}
-      </Button>
+        <Camera initialViewState={{ center, zoom: 16, pitch: 70 }} />
+        <BuildingsLayer selection={selection} />
+        <SelectedBuildingLayer selection={selection} />
+        <UserLocation animated accuracy heading />
+      </Map>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  map: { flex: 1 },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});

@@ -2,10 +2,10 @@ import { useProfileStore } from "@/stores/profileStore";
 import { Stack } from "expo-router";
 import { ActivityIndicator } from "react-native";
 
-export default function ProtectedLayout() {
-  const hasProfile = useProfileStore((s) => s.hasProfile);
+export default function QrLayout() {
+  const hasCarenderia = useProfileStore((s) => s.hasCarenderia);
 
-  if (hasProfile === null) {
+  if (hasCarenderia === null) {
     return <ActivityIndicator />;
   }
 
@@ -16,11 +16,11 @@ export default function ProtectedLayout() {
         contentStyle: { backgroundColor: "transparent" },
       }}
     >
-      <Stack.Protected guard={!hasProfile}>
-        <Stack.Screen name="(profile)/setup/index" />
+      <Stack.Protected guard={!!hasCarenderia}>
+        <Stack.Screen name="qr-scanner" options={{ presentation: "modal" }} />
       </Stack.Protected>
-      <Stack.Protected guard={!!hasProfile}>
-        <Stack.Screen name="(tabs)" />
+      <Stack.Protected guard={!hasCarenderia}>
+        <Stack.Screen name="my-qr" options={{ presentation: "modal" }} />
       </Stack.Protected>
     </Stack>
   );

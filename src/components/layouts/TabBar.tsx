@@ -1,18 +1,21 @@
-import { useTheme } from '@/hooks/useTheme';
-import { cn } from '@/lib/utils';
+import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 import {
   MapPinIcon,
+  Newspaper,
   QrCodeIcon,
-  Settings01Icon,
-} from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react-native';
-import React from 'react';
-import { Pressable, View } from 'react-native';
-import { Text } from '../ui/text';
+  User02Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { useRouter } from "expo-router";
+import React from "react";
+import { Pressable, View } from "react-native";
+import { Text } from "../ui/text";
 
 const ROUTE_ICONS: Record<string, any> = {
-  'map/index': MapPinIcon,
-  'settings/index': Settings01Icon,
+  "map/index": MapPinIcon,
+  "feed/index": Newspaper,
+  "profile/index": User02Icon,
 };
 
 interface TabBarProps {
@@ -23,47 +26,53 @@ interface TabBarProps {
 
 export function TabBar({ state, descriptors, navigation }: TabBarProps) {
   const theme = useTheme();
+  const router = useRouter();
   return (
     <View
-      className="absolute left-0 right-0 bottom-0 flex-row justify-center pb-safe gap-4 z-50 items-center"
+      className="pb-safe absolute bottom-7 left-0 right-0 z-50 flex-row items-center justify-center gap-4"
       pointerEvents="box-none"
     >
-      <View className="flex-row bg-card rounded-2xl px-2 py-2 gap-1 pointer-events-auto">
+      <View
+        className="pointer-events-auto flex-row gap-1 rounded-2xl bg-card px-2 py-2"
+        style={{
+          elevation: 20,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.2,
+          shadowRadius: 16,
+        }}
+      >
         {state.routes.map((route: any, index: number) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
 
           const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name.replace(/\/index$/, '');
+            options.tabBarLabel ??
+            options.title ??
+            route.name.replace(/\/index$/, "");
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name, route.params);
-            }
-          };
-          const onLongPress = () => {
-            navigation.emit({ type: 'tabLongPress', target: route.key });
-          };
           return (
             <Pressable
               key={route.key}
-              onPress={onPress}
-              onLongPress={onLongPress}
+              onPress={() => {
+                const event = navigation.emit({
+                  type: "tabPress",
+                  target: route.key,
+                  canPreventDefault: true,
+                });
+                if (!isFocused && !event.defaultPrevented) {
+                  navigation.navigate(route.name, route.params);
+                }
+              }}
+              onLongPress={() =>
+                navigation.emit({ type: "tabLongPress", target: route.key })
+              }
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={options.tabBarAccessibilityLabel}
               className={cn(
-                'flex-col items-center justify-center gap-1 w-20 h-14 px-4 py-2 rounded-xl transition-all ease-in-out',
-                isFocused ? 'bg-primary' : 'bg-transparent',
+                "h-14 w-20 flex-col items-center justify-center gap-1 rounded-xl px-4 py-2 transition-all ease-in-out",
+                isFocused ? "bg-primary" : "bg-transparent",
               )}
             >
               {ROUTE_ICONS[route.name] && (
@@ -78,10 +87,10 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
 
               <Text
                 className={cn(
-                  'text-[11px] tracking-wide capitalize',
+                  "text-[11px] capitalize tracking-wide",
                   isFocused
-                    ? 'text-primary-foreground'
-                    : 'text-muted-foreground',
+                    ? "text-primary-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {label}
@@ -91,25 +100,24 @@ export function TabBar({ state, descriptors, navigation }: TabBarProps) {
         })}
       </View>
 
-      {/* QR floating action button */}
       <View
-        className="pointer-events-auto rounded-2xl overflow-hidden"
+        className="pointer-events-auto overflow-hidden rounded-2xl"
         style={{
           elevation: 20,
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.2,
           shadowRadius: 16,
         }}
       >
         <Pressable
-          className="items-center justify-center bg-primary w-16 h-16 rounded-2xl"
+          className="h-16 w-16 items-center justify-center rounded-2xl bg-primary"
           onPress={() => {
-            // TODO: Open your QR modal here
+            router.push("/(protected)/(qr)/index");
           }}
           accessibilityLabel="Open QR"
           accessibilityRole="button"
-          android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+          android_ripple={{ color: "rgba(255,255,255,0.2)", borderless: false }}
         >
           <HugeiconsIcon
             icon={QrCodeIcon}
